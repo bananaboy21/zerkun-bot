@@ -35,7 +35,7 @@ async def twitter(ctx):
     
     
 @bot.command()
-@bot.has_permissions(manage_messages = True)
+@commands.has_permissions(manage_messages = True)
 async def purge(ctx, num: int):
     """Deletes a # of msgs. *purge [# of msgs].""" 
     try: 
@@ -53,7 +53,7 @@ async def purge(ctx, num: int):
         
         
 @bot.command()
-@bot.has_permissions(ban_members=True)
+@commands.has_permissions(ban_members=True)
 async def mute(ctx, user: discord.Member, time: int):
     '''Forces someone to shut up. Usage: *mute [user] [time in mins]'''
     try:
@@ -76,7 +76,7 @@ async def mute(ctx, user: discord.Member, time: int):
     
     
 @bot.command()
-@bot.has_permissions(kick_members = True)
+@commands.has_permissions(kick_members = True)
 async def kick(ctx, user: discord.Member):
     """Kicks a member into the world outside your server."""
     await ctx.send(f"{user.name} has been kicked.")
@@ -84,7 +84,7 @@ async def kick(ctx, user: discord.Member):
     
     
 @bot.command()
-@bot.has_permissions(ban_members = True)
+@commands.has_permissions(ban_members = True)
 async def ban(ctx, user: discord.Member):
     """Bans a member."""
     await ctx.send(f"{user.name} has been banned.")
