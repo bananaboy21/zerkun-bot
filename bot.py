@@ -3,7 +3,7 @@ import sys
 import os
 import io
 from discord.ext import commands
-bot = commands.Bot(command_prefix=commands.when_mentioned_or('+'),description="Zerkun Design's Discord bot.\n\nHelp Commands",owner_id=277981712989028353)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or('='),description="Zerkun Design's Discord bot.\n\nHelp Commands",owner_id=277981712989028353)
 
 
 
@@ -26,6 +26,12 @@ async def ping(ctx):
 async def invite(ctx):
     """Allow my bot to join the hood. YOUR hood."""
     await ctx.send("Invite me to your server: https://discordapp.com/oauth2/authorize?client_id=407676169668788234&scope=bot&permissions=8")
+    
+
+@bot.command()
+async def twitter(ctx):
+    """My Twitter profile."""
+    await ctx.send("https://twitter.com/ZerkunDesigns")
     
     
 if not os.environ.get('TOKEN'):
