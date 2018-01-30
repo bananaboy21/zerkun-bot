@@ -2,6 +2,7 @@ import discord
 import sys
 import os
 import io
+import asyncio
 from discord.ext import commands
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('='),description="Zerkun Design's Discord bot.\n\nHelp Commands",owner_id=277981712989028353)
 
@@ -54,7 +55,7 @@ async def purge(ctx, num: int):
         
 @bot.command()
 @commands.has_permissions(ban_members=True)
-async def mute(ctx, user: discord.Member, time: int):
+async def mute(ctx, user: discord.Member, time=None):
     '''Forces someone to shut up. Usage: *mute [user] [time in mins]'''
     try:
         if time is None:
@@ -66,10 +67,10 @@ async def mute(ctx, user: discord.Member, time: int):
                 float(time)
             except ValueError:
                 return await ctx.send("Your time is an invalid number. Make sure...it is a number.")
-            await ctx.guild.set_permissions(user, send_messages=False)
+            await ctx.channel.set_permissions(user, send_messages=False)
             await ctx.channel.send(f"{user.mention} is now forced to shut up. :zipper_mouth: ")
             await asyncio.sleep(time)
-            await ctx.guild.set_permissions(user, send_messages=True)
+            await ctx.channel.set_permissions(user, send_messages=True)
             await ctx.channel.send(f"{user.mention} is now un-shutted up.")
     except discord.Forbidden:
         return await ctx.send("I could not mute the user. Make sure I have the manage channels permission.")
