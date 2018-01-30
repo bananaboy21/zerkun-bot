@@ -34,6 +34,63 @@ async def twitter(ctx):
     await ctx.send("https://twitter.com/ZerkunDesigns")
     
     
+@bot.command()
+@bot.has_permissions(manage_messages = True)
+async def purge(ctx, num: int):
+    """Deletes a # of msgs. *purge [# of msgs].""" 
+    try: 
+        if num is None:
+            await ctx.send("How many messages would you like me to delete? Usage: *purge [number of msgs]")
+        else:
+            try:
+                float(num)
+            except ValueError:
+                return await ctx.send("The number is invalid. Make sure it is valid! Usage: *purge [number of msgs]")
+            await ctx.channel.purge(limit=num+1)
+            await ctx.send("Purged successfully :white_check_mark:")
+    except discord.Forbidden:
+        await ctx.send("Purge unsuccessful. The bot does not have Manage Msgs permission.")
+        
+        
+@bot.command()
+@bot.has_permissions(ban_members=True)
+async def mute(ctx, user: discord.Member, time: int):
+    '''Forces someone to shut up. Usage: *mute [user] [time in mins]'''
+    try:
+        if time is None:
+            await ctx.channel.set_permissions(user, send_messages=False)
+            await ctx.send(f"{user.mention} is now forced to shut up. :zipper_mouth: ")
+        else:
+            try:
+                time = time * 60
+                float(time)
+            except ValueError:
+                return await ctx.send("Your time is an invalid number. Make sure...it is a number.")
+            await ctx.guild.set_permissions(user, send_messages=False)
+            await ctx.channel.send(f"{user.mention} is now forced to shut up. :zipper_mouth: ")
+            await asyncio.sleep(time)
+            await ctx.guild.set_permissions(user, send_messages=True)
+            await ctx.channel.send(f"{user.mention} is now un-shutted up.")
+    except discord.Forbidden:
+        return await ctx.send("I could not mute the user. Make sure I have the manage channels permission.")
+    
+    
+@bot.command()
+@bot.has_permissions(kick_members = True)
+async def kick(ctx, user: discord.Member):
+    """Kicks a member into the world outside your server."""
+    await ctx.send(f"{user.name} has been kicked.")
+    await user.kick()
+    
+    
+@bot.command()
+@bot.has_permissions(ban_members = True)
+async def ban(ctx, user: discord.Member):
+    """Bans a member."""
+    await ctx.send(f"{user.name} has been banned.")
+    await user.ban()
+    
+    
 if not os.environ.get('TOKEN'):
     print("ERROR: Bot token not found.")
 bot.run(os.environ.get('TOKEN').strip('"'))
