@@ -7,6 +7,13 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('='),description="Zerkun Design's Discord bot.\n\nHelp Commands",owner_id=277981712989028353)
 
 
+def cleanup_code(content):
+    # remove ```py\n```
+    if content.startswith('```') and content.endswith('```'):
+        return '\n'.join(content.split('\n')[1:-1])
+
+    return content.strip('` \n')
+
 
 @bot.event
 async def on_ready():
@@ -90,6 +97,54 @@ async def ban(ctx, user: discord.Member):
     """Bans a member."""
     await ctx.send(f"{user.name} has been banned.")
     await user.ban()
+    
+    
+@bot.command(hidden=True, name='eval')
+async def _eval(ctx, *, body: str):
+
+    if not dev_check(ctx.author.id):
+        return await ctx.send("HALT! This command is for the devs only. Sorry. :x:")
+
+    env = {
+        'bot': bot,
+        'ctx': ctx,
+        'channel': ctx.channel,
+        'author': ctx.author,
+        'guild': ctx.guild,
+        'message': ctx.message,
+    }
+
+    env.update(globals())
+
+    body = cleanup_code(body)
+    stdout = io.StringIO()
+
+    to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+
+    try:
+        exec(to_compile, env)
+    except Exception as e:
+        return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+
+    func = env['func']
+    try:
+        with redirect_stdout(stdout):
+            ret = await func()
+    except Exception as e:
+        value = stdout.getvalue()
+        await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+    else:
+        value = stdout.getvalue()
+        try:
+            await ctx.message.add_reaction('\u2705')
+        except:
+            pass
+
+        if ret is None:
+            if value:
+                await ctx.send(f'```py\n{value}\n```')
+        else:
+            await ctx.send(f'```py\n{value}{ret}\n```')   
     
     
 if not os.environ.get('TOKEN'):
