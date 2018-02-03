@@ -113,9 +113,6 @@ async def ban(ctx, user: discord.Member):
 @bot.command(hidden=True, name='eval')
 async def _eval(ctx, *, body: str):
 
-    if not dev_check(ctx.author.id):
-        return await ctx.send("HALT! This command is for the devs only. Sorry. :x:")
-
     env = {
         'bot': bot,
         'ctx': ctx,
